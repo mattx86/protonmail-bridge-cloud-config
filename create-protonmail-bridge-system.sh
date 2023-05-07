@@ -15,10 +15,12 @@ git clone -b v${proton_bridge_version} --single-branch https://github.com/Proton
 
 # Update some settings in the code.
 cd /root/proton-bridge
+go mod tidy
+sed -rie '/gluon session ID/d' /root/go/pkg/mod/github.com/\!proton\!mail/gluon*/internal/session/session.go
 sed -rie 's;127\.0\.0\.1;0.0.0.0;' internal/constants/constants.go
 sed -ri \
-  -e 's;(IMAPPort:) .*;\1 993,;' \
-  -e 's;(SMTPPort:) .*;\1 587,;' \
+  -e 's;(IMAPPort:) .*;\1 1993,;' \
+  -e 's;(SMTPPort:) .*;\1 1587,;' \
   -e 's;(IMAPSSL:) .*;\1 true,;' \
   -e 's;(SMTPSSL:) .*;\1 true,;' \
   -e 's;(ShowAllMail:) .*;\1 false,;' \
@@ -40,20 +42,22 @@ chmod 755 /usr/local/bin/proton-bridge-cli
 useradd -e '' -f -1 -K PASS_MAX_DAYS=-1 -U -r -m -s /usr/sbin/nologin proton-bridge
 
 # Initialize the password store.
-su proton-bridge -c "gpg --batch --passphrase '' --quick-gen-key 'proton-bridge' default default never"
-su proton-bridge -c "pass init 'proton-bridge'"
+su -s /bin/bash -c "gpg --batch --passphrase '' --quick-gen-key 'proton-bridge' default default never" - proton-bridge
+su -s /bin/bash -c "pass init 'proton-bridge'" - proton-bridge
 
 # Get certificate.
 cd /root
 lego --accept-tos --email $letsencrypt_email --domains=$letsencrypt_hostname --http run
 PROTON_BRIDGE_HOME=$(getent passwd proton-bridge | awk -F':' '{print $6}')
-install -o proton-bridge -g proton-bridge -m 400 /root/.lego/certificates/${letsencrypt_hostname}/${letsencrypt_hostname}.crt ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.crt
-install -o proton-bridge -g proton-bridge -m 400 /root/.lego/certificates/${letsencrypt_hostname}/${letsencrypt_hostname}.key ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.key
+install -o proton-bridge -g proton-bridge -m 400 /root/.lego/certificates/${letsencrypt_hostname}.crt ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.crt
+install -o proton-bridge -g proton-bridge -m 400 /root/.lego/certificates/${letsencrypt_hostname}.key ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.key
 
 # Install certificate.
-cd /root
+mkdir /root/import-tls-cert
+cd /root/import-tls-cert
 curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/import-tls-cert.go -o import-tls-cert.go
 go mod init import-tls-cert
+go install github.com/google/goexpect@latest
 go mod tidy
 go build import-tls-cert.go
 ./import-tls-cert ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.crt ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.key
