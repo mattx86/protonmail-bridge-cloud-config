@@ -59,3 +59,10 @@ go install github.com/google/goexpect@latest
 go mod tidy
 go build import-tls-cert.go
 ./import-tls-cert ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.crt ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.key
+
+# Install service files and enable the service to start on boot.
+curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge.init.d -o /etc/init.d/proton-bridge
+curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge.service -o /etc/systemd/system/proton-bridge.service
+chmod 755 /etc/init.d/proton-bridge
+chmod 644 /etc/systemd/system/proton-bridge.service
+systemctl enable proton-bridge
