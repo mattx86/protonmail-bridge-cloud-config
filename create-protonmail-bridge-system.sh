@@ -17,7 +17,6 @@ git clone -b v${proton_bridge_version} --single-branch https://github.com/Proton
 cd /root/proton-bridge
 go mod tidy
 sed -rie '/gluon session ID/d' /root/go/pkg/mod/github.com/\!proton\!mail/gluon*/internal/session/session.go
-sed -rie 's;127\.0\.0\.1;0.0.0.0;' internal/constants/constants.go
 sed -ri \
   -e 's;(IMAPPort:) .*;\1 1993,;' \
   -e 's;(SMTPPort:) .*;\1 1587,;' \
@@ -26,7 +25,6 @@ sed -ri \
   -e 's;(ShowAllMail:) .*;\1 false,;' \
   -e 's;(AutoUpdate:) .*;\1 false,;' \
   internal/vault/types_settings.go
-sed -rie 's;(AddressMode:) .*;\1 SplitMode,;' internal/vault/types_user.go
 
 # Build and install the headless version of Proton Mail Bridge.
 make build-nogui
