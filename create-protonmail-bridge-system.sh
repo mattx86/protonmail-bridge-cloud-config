@@ -7,7 +7,7 @@ proton_bridge_version="3.1.1"
 golang_version="2:1.18~0ubuntu2"
 
 # Install the packages we need.
-apt-get install -y git build-essential libsecret-common libsecret-1-dev libsecret-1-0 pass gpg golang=${golang_version} lego
+apt-get install -y git build-essential libsecret-common libsecret-1-dev libsecret-1-0 pass gpg golang=${golang_version} lego socat
 
 # Get the Proton Mail Bridge code.
 cd /root
