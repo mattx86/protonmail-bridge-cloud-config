@@ -3,7 +3,7 @@
 letsencrypt_hostname="$1"
 letsencrypt_email="$2"
 
-proton_bridge_version="3.1.1"
+proton_bridge_version="3.1.2"
 golang_version="2:1.18~0ubuntu2"
 
 # Install the packages we need.
@@ -66,3 +66,16 @@ curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-confi
 chmod 755 /etc/init.d/proton-bridge
 chmod 644 /etc/systemd/system/proton-bridge.service
 systemctl enable proton-bridge
+
+# Let user know we are done.
+echo
+echo
+echo "Proton Mail Bridge installation is complete."
+echo
+echo "Please login to this system as root and run \"proton-bridge-cli\"."
+echo "Once inside the Proton Mail Bridge CLI, enter \"login\" and proceed"
+echo "with the prompts to login to your Proton Mail account.  When complete,"
+echo "enter \"exit\" and start the service (systemctl start proton-bridge),"
+echo "or reboot the system."
+echo
+echo
