@@ -75,6 +75,7 @@ echo
 echo "Please login to this system as root and run \"proton-bridge-cli\"."
 echo "Once inside the Proton Mail Bridge CLI, enter \"login\" and proceed"
 echo "with the prompts to login to your Proton Mail account.  When complete,"
+echo "enter \"info\" and make note of the username and password.  Next,"
 echo "enter \"exit\" and start the service (systemctl start proton-bridge),"
 echo "or reboot the system."
 echo
