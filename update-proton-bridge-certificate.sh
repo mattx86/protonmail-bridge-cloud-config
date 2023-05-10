@@ -17,7 +17,7 @@ if [ ! -f /root/import-tls-cert/import-tls-cert ] ; then
   cd /root/import-tls-cert
   curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/import-tls-cert.go -o import-tls-cert.go
   go mod init import-tls-cert
-  go install github.com/google/goexpect@latest
+  go install github.com/google/goexpect@v0.0.0-20210430020637-ab937bf7fd6f
   go mod tidy
   go build import-tls-cert.go
 fi
