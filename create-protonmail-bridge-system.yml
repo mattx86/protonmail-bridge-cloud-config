@@ -1,0 +1,24 @@
+#cloud-config
+# Cloud: Hetzner Cloud (though this may work with your cloud without any changes)
+# Instance Type: Shared vCPU, CPX11 (2 vCPU, 2GB RAM)
+# OS: Ubuntu 22.04
+# This installs Proton Mail Bridge and exposes it on the network with
+# an SSL certificate from Let's Encrypt.
+#
+# Please specify your new Proton Mail Bridge's hostname below, and the email address
+# to use with the Let's Encrypt SSL certificate registration.
+#
+runcmd:
+  - apt-get update >/dev/tty1 2>&1
+  - apt-get install -y curl ufw >/dev/tty1 2>&1
+  - ufw allow ssh >/dev/tty1 2>&1
+  - ufw allow http >/dev/tty1 2>&1
+  - ufw allow 993 >/dev/tty1 2>&1
+  - ufw allow 587 >/dev/tty1 2>&1
+  - ufw enable >/dev/tty1 2>&1
+  - apt-get upgrade -y >/dev/tty1 2>&1
+  - echo "#!/bin/bash\n/root/create-protonmail-bridge-system.sh 'proton-bridge.your-domain.com' 'you@your-domain.com'" >/root/create-protonmail-bridge-system-with-args.sh
+  - chmod 700 /root/create-protonmail-bridge-system-with-args.sh
+  - curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/create-protonmail-bridge-system.sh -o /root/create-protonmail-bridge-system.sh
+  - chmod 700 /root/create-protonmail-bridge-system.sh
+  - su -P -s /bin/bash -c /root/create-protonmail-bridge-system-with-args.sh - root >/dev/tty1 2>&1
