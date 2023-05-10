@@ -71,4 +71,6 @@ echo "enter \"info\" and make note of the username and password.  Next,"
 echo "enter \"exit\" and start the service (systemctl start proton-bridge),"
 echo "or reboot the system."
 echo
+echo "Enjoy!"
+echo
 echo
