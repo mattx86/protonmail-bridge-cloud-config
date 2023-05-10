@@ -48,6 +48,8 @@ echo "LETSENCRYPT_HOSTNAME=\"${LETSENCRYPT_HOSTNAME}\"" >/root/.letsencrypt_sett
 echo "LETSENCRYPT_EMAIL=\"${LETSENCRYPT_EMAIL}\"" >>/root/.letsencrypt_settings
 curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/update-proton-bridge-certificate.sh -o /usr/local/bin/update-proton-bridge-certificate.sh
 chmod 755 /usr/local/bin/update-proton-bridge-certificate.sh
+echo "15 3 15 */2 * root /usr/local/bin/update-proton-bridge-certificate.sh >/dev/null 2>&1" >/etc/cron.d/update-proton-bridge-certificate
+chmod 644 /etc/cron.d/update-proton-bridge-certificate
 /usr/local/bin/update-proton-bridge-certificate.sh
 
 # Install service files and enable the service to start on boot.
