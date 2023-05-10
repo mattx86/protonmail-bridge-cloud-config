@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Stop Proton Mail Bridge.
+RESTART_PROTON_BRIDGE=false
+systemctl status proton-bridge >/dev/null 2>&1
+if [ $? -eq 0 ] ; then
+  systemctl stop proton-bridge
+  RESTART_PROTON_BRIDGE=true
+fi
+
+su -P -s /bin/bash -c '/usr/local/bin/proton-bridge --cli' - proton-bridge
+
+# Start Proton Mail Bridge if it was previously running.
+if [ "$RESTART_PROTON_BRIDGE" == "true" ] ; then
+  systemctl start proton-bridge
+fi
