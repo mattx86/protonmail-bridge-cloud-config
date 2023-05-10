@@ -1,7 +1,7 @@
 #!/bin/bash
 
-letsencrypt_hostname="$1"
-letsencrypt_email="$2"
+LETSENCRYPT_HOSTNAME="$1"
+LETSENCRYPT_EMAIL="$2"
 
 proton_bridge_version="3.1.2"
 golang_version="2:1.18~0ubuntu2"
@@ -43,22 +43,12 @@ useradd -e '' -f -1 -K PASS_MAX_DAYS=-1 -U -r -m -s /usr/sbin/nologin proton-bri
 su -s /bin/bash -c "gpg --batch --passphrase '' --quick-gen-key 'proton-bridge' default default never" - proton-bridge
 su -s /bin/bash -c "pass init 'proton-bridge'" - proton-bridge
 
-# Get certificate.
-cd /root
-lego --accept-tos --email $letsencrypt_email --domains=$letsencrypt_hostname --http run
-PROTON_BRIDGE_HOME=$(getent passwd proton-bridge | awk -F':' '{print $6}')
-install -o proton-bridge -g proton-bridge -m 400 /root/.lego/certificates/${letsencrypt_hostname}.crt ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.crt
-install -o proton-bridge -g proton-bridge -m 400 /root/.lego/certificates/${letsencrypt_hostname}.key ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.key
-
-# Install certificate.
-mkdir /root/import-tls-cert
-cd /root/import-tls-cert
-curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/import-tls-cert.go -o import-tls-cert.go
-go mod init import-tls-cert
-go install github.com/google/goexpect@latest
-go mod tidy
-go build import-tls-cert.go
-./import-tls-cert ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.crt ${PROTON_BRIDGE_HOME}/${letsencrypt_hostname}.key
+# Get and import Let's Encrypt certificate.
+echo "LETSENCRYPT_HOSTNAME=\"${LETSENCRYPT_HOSTNAME}\"" >/root/.letsencrypt_settings
+echo "LETSENCRYPT_EMAIL=\"${LETSENCRYPT_EMAIL}\"" >>/root/.letsencrypt_settings
+curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/update-proton-bridge-certificate.sh -o /usr/local/bin/update-proton-bridge-certificate.sh
+chmod 755 /usr/local/bin/update-proton-bridge-certificate.sh
+/usr/local/bin/update-proton-bridge-certificate.sh
 
 # Install service files and enable the service to start on boot.
 curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge.init.d -o /etc/init.d/proton-bridge
