@@ -30,10 +30,7 @@ sed -ri \
 make build-nogui
 install -o root -g root -m 755 /root/proton-bridge/proton-bridge /usr/local/bin/proton-bridge
 install -o root -g root -m 755 /root/proton-bridge/bridge /usr/local/bin/bridge
-cat <<EOF >/usr/local/bin/proton-bridge-cli
-#!/bin/bash
-su -P -s /bin/bash -c '/usr/local/bin/proton-bridge --cli' - proton-bridge
-EOF
+curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge-cli -o /usr/local/bin/proton-bridge-cli
 chmod 755 /usr/local/bin/proton-bridge-cli
 
 # Create a service account for Proton Mail Bridge.
@@ -43,6 +40,13 @@ useradd -e '' -f -1 -K PASS_MAX_DAYS=-1 -U -r -m -s /usr/sbin/nologin proton-bri
 su -s /bin/bash -c "gpg --batch --passphrase '' --quick-gen-key 'proton-bridge' default default never" - proton-bridge
 su -s /bin/bash -c "pass init 'proton-bridge'" - proton-bridge
 
+# Install service files and enable the service to start on boot.
+curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge.init.d -o /etc/init.d/proton-bridge
+curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge.service -o /etc/systemd/system/proton-bridge.service
+chmod 755 /etc/init.d/proton-bridge
+chmod 644 /etc/systemd/system/proton-bridge.service
+systemctl enable proton-bridge
+
 # Get and import Let's Encrypt certificate.
 echo "LETSENCRYPT_HOSTNAME=\"${LETSENCRYPT_HOSTNAME}\"" >/root/.letsencrypt_settings
 echo "LETSENCRYPT_EMAIL=\"${LETSENCRYPT_EMAIL}\"" >>/root/.letsencrypt_settings
@@ -51,13 +55,6 @@ chmod 755 /usr/local/bin/update-proton-bridge-certificate.sh
 echo "15 3 15 */2 * root /usr/local/bin/update-proton-bridge-certificate.sh >/dev/null 2>&1" >/etc/cron.d/update-proton-bridge-certificate
 chmod 644 /etc/cron.d/update-proton-bridge-certificate
 /usr/local/bin/update-proton-bridge-certificate.sh
-
-# Install service files and enable the service to start on boot.
-curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge.init.d -o /etc/init.d/proton-bridge
-curl -Ls https://raw.githubusercontent.com/mattx86/protonmail-bridge-cloud-config/main/proton-bridge.service -o /etc/systemd/system/proton-bridge.service
-chmod 755 /etc/init.d/proton-bridge
-chmod 644 /etc/systemd/system/proton-bridge.service
-systemctl enable proton-bridge
 
 # Let user know we are done.
 echo
