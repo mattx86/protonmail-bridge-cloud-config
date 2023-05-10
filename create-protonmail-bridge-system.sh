@@ -3,7 +3,7 @@
 LETSENCRYPT_HOSTNAME="$1"
 LETSENCRYPT_EMAIL="$2"
 
-proton_bridge_version="3.1.2"
+proton_bridge_version="3.1.3"
 golang_version="2:1.18~0ubuntu2"
 
 # Install the packages we need.
