@@ -33,6 +33,9 @@ fi
 # Import certificate.
 /root/import-tls-cert/import-tls-cert ${PROTON_BRIDGE_HOME}/${LETSENCRYPT_HOSTNAME}.crt ${PROTON_BRIDGE_HOME}/${LETSENCRYPT_HOSTNAME}.key
 
+# Ensure proton-bridge CLI has stopped running.
+pkill -9 -f -n -U proton-bridge 'bridge --cli'
+
 # Start Proton Mail Bridge if it was previously running.
 if [ "$RESTART_PROTON_BRIDGE" == "true" ] ; then
   systemctl start proton-bridge
