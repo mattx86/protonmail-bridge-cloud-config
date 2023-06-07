@@ -39,6 +39,13 @@ start() {
 
   nohup su -P -s /bin/bash -c "$PROTON_BRIDGE_EXEC -n" - proton-bridge >/dev/null 2>&1 &
   echo $! >$PROTON_BRIDGE_PIDFILE
+
+  status >/dev/null 2>&1
+  if [ $SOCAT_IMAP_PID -gt 0 -a $SOCAT_SMTP_PID -gt 0 -a $PROTON_BRIDGE_PID -gt 0 ] ; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 stop() {
@@ -59,6 +66,8 @@ stop() {
   fi
 
   /bin/rm -f $SOCAT_IMAP_PIDFILE $SOCAT_SMTP_PIDFILE $PROTON_BRIDGE_PIDFILE
+
+  return 0
 }
 
 restart() {
@@ -89,13 +98,20 @@ status() {
   else
     echo "Proton Mail Bridge: running [$PROTON_BRIDGE_PID]"
   fi
+
+  return 0
 }
 
-[ "$1" == "status" ] && status && exit 0
-[ "$1" == "start" ] && start && exit 0
-[ "$1" == "stop" ] && stop && exit 0
-[ "$1" == "restart" ] && restart && exit 0
-
-echo "syntax: $0 <start|stop|restart|status>"
-exit 0
-
+if [ "x$1" == "xstatus" ] ; then
+  status
+elif [ "x$1" == "xstart" ] ; then
+  start
+elif [ "x$1" == "xstop" ] ; then
+  stop
+elif [ "x$1" == "xrestart" ] ; then
+  restart
+else
+  echo "syntax: $0 <start|stop|restart|status>"
+  exit 0
+fi
+exit $?
