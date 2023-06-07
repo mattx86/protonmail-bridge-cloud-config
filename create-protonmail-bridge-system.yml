@@ -1,7 +1,13 @@
 #cloud-config
-# Cloud: Hetzner Cloud (though this may work with your cloud without any changes)
-# Instance Type: Shared vCPU, CPX11 (2 vCPU, 2GB RAM)
-# OS: Ubuntu 22.04
+#
+# Copyright (c) 2023 Matt Smith
+# MIT License
+#
+# Cloud ........... : Hetzner Cloud (though this may work with your cloud without any changes)
+# Instance Type ... : Shared vCPU, CPX11 (2 vCPU, 2GB RAM)
+# OS .............. : Ubuntu 22.04
+#
+# Description ..... :
 # This installs Proton Mail Bridge and exposes it on the network with
 # an SSL certificate from Let's Encrypt.
 #

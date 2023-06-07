@@ -1,5 +1,15 @@
 #!/bin/bash
+#
+# Copyright (c) 2023 Matt Smith
+# MIT License
+#
+# Purpose:
+# A script for fetching the initial certificate and for periodically
+# updating the certificate via the installed cron job at:
+# /etc/cron.d/update-proton-bridge-certificate
+#
 
+# Pull in the Let's Encrypt settings.
 . /root/.letsencrypt_settings
 
 # Get certificate.

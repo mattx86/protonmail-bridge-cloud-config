@@ -1,3 +1,12 @@
+/*
+Copyright (c) 2023 Matt Smith
+MIT License
+
+Purpose:
+To import an SSL certificate into the ProtonMail Bridge
+via the interactive CLI.  (Is there a better way?)
+*/
+
 package main
 
 import (

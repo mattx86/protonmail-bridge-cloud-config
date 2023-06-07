@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# Copyright (c) 2023 Matt Smith
+# MIT License
+#
+# Purpose:
+# A wrapper script for the `proton-bridge --cli` command that runs the
+# ProtonMail Bridge CLI as the proton-bridge user.  The Bridge has to
+# be stopped if we want the CLI, and this takes care of that, as well.
+#
 
 # Stop Proton Mail Bridge.
 RESTART_PROTON_BRIDGE=false
@@ -8,6 +17,7 @@ if [ $? -eq 0 ] ; then
   RESTART_PROTON_BRIDGE=true
 fi
 
+# Start the Proton Mail Bridge CLI.
 su -P -s /bin/bash -c '/usr/local/bin/proton-bridge --cli' - proton-bridge
 
 # Start Proton Mail Bridge if it was previously running.

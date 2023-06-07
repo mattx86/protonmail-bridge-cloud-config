@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Copyright (c) 2023 Matt Smith
+# MIT License
+#
 
 LETSENCRYPT_HOSTNAME="$1"
 LETSENCRYPT_EMAIL="$2"
